@@ -13,7 +13,6 @@ namespace winhiddump
         static void Main(string[] args)
         {
             Console.WriteLine("WinHIDdump:");
-            Console.WriteLine("[{0}]", string.Join(", ", args));
 
             string vidpid = GetArgument(args, "--vidpid");
 //            Console.WriteLine("Got vidpid: " + vidpid);
