@@ -12,12 +12,11 @@ namespace winhiddump
 
         static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
-            Console.WriteLine("Hello World Tod!");
+            Console.WriteLine("WinHIDdump:");
+            Console.WriteLine("[{0}]", string.Join(", ", args));
 
             string vidpid = GetArgument(args, "--vidpid");
-            Console.WriteLine("Got vidpid: " + vidpid);
+//            Console.WriteLine("Got vidpid: " + vidpid);
 
             var list = DeviceList.Local;
             foreach (var hidDevice in list.GetHidDevices())
@@ -27,9 +26,8 @@ namespace winhiddump
                 Console.WriteLine("Report Descriptor:");
                 Console.WriteLine("  {0} ({1} bytes)", string.Join(" ", rawReportDescriptor.Select(d => d.ToString("X2"))), rawReportDescriptor.Length);
             }
+//            Console.WriteLine("Press any key to exit");
 //            Console.ReadKey();
-
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
         }
     }
 }
