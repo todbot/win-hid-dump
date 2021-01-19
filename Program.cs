@@ -12,24 +12,29 @@ namespace winhiddump
 
         static void Main(string[] args)
         {
-            // The code provided will print ‘Hello World’ to the console.
-            // Press Ctrl+F5 (or go to Debug > Start Without Debugging) to run your app.
-            Console.WriteLine("Hello World Tod!");
+            Console.WriteLine("WinHIDdump:");
 
             string vidpid = GetArgument(args, "--vidpid");
-            Console.WriteLine("Got vidpid: " + vidpid);
+//            Console.WriteLine("Got vidpid: " + vidpid);
 
             var list = DeviceList.Local;
-            foreach (var hidDevice in list.GetHidDevices())
+            foreach (var dev in list.GetHidDevices())
             {
-                Console.WriteLine(hidDevice.ToString() + " @ " + hidDevice.DevicePath);
-                byte[] rawReportDescriptor = hidDevice.GetRawReportDescriptor();
-                Console.WriteLine("Report Descriptor:");
-                Console.WriteLine("  {0} ({1} bytes)", string.Join(" ", rawReportDescriptor.Select(d => d.ToString("X2"))), rawReportDescriptor.Length);
+                Console.Write(string.Format("{0:X4}:{1:X4}: {2} - {3}\nPATH:{4}\n", 
+                    dev.VendorID, dev.ProductID, dev.GetManufacturer(), dev.GetProductName(), dev.DevicePath));
+//                Console.WriteLine(dev.ToString() + " @ " + dev.DevicePath);
+                byte[] rawReportDescriptor = dev.GetRawReportDescriptor();
+                Console.Write("DESCRIPTOR:\n  ");
+                for( int i=0; i< rawReportDescriptor.Length; i++)
+                {
+                    Console.Write(rawReportDescriptor[i].ToString("X2") + " ");
+                    Console.Write((i % 16 == 15) ? "\n  " : " ");
+                }
+                Console.WriteLine("\n  ({0} bytes)", rawReportDescriptor.Length);
+//                Console.WriteLine("  {0} ({1} bytes)", string.Join(" ", rawReportDescriptor.Select(d => d.ToString("X2"))), rawReportDescriptor.Length);
             }
+//            Console.WriteLine("Press any key to exit");
 //            Console.ReadKey();
-
-            // Go to http://aka.ms/dotnet-get-started-console to continue learning how to build a console app! 
         }
     }
 }
