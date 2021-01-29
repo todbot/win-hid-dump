@@ -1,13 +1,13 @@
-# WinHIDdump
+# win-hid-dump
 
-`WinHIDdump` is a small command-line app to output the __HID Report Descriptors__ of all connected HID devices.  Think of it as sort of a Windows version of [`usbhid-dump`](https://github.com/DIGImend/usbhid-dump). It is designed to inspect HID devices for use with [`hidapi`](https://github.com/libusb/hidapi/), [`node-hid`](https://github.com/node-hid/node-hid), or similar HID libraries.  The output can be parsed directly by the [USB Descriptor Parser](https://eleccelerator.com/usbdescreqparser/).
+`win-hid-dump` is a small command-line app to output the __HID Report Descriptors__ of all connected HID devices.  Think of it as sort of a Windows version of [`usbhid-dump`](https://github.com/DIGImend/usbhid-dump). It is designed to inspect HID devices for use with [`hidapi`](https://github.com/libusb/hidapi/), [`node-hid`](https://github.com/node-hid/node-hid), or similar HID libraries.  The output can be parsed directly by the [USB Descriptor Parser](https://eleccelerator.com/usbdescreqparser/).
 
 
 `WinHIDdump` is based on the very nice [HIDSharp library](https://www.nuget.org/packages/HidSharp/). It does the hard work of reconstructing the HID Report Descriptor from the Windows HID library, as the actual HID Report Descriptor apparently isn't available.
 
 ## Usage:
 
-To use `WinHIDdump`, download the zip file from the Releases page, unzip it, and run it.
+To use `win-hid-dump`, download the zip file from the Releases page, unzip it, and run it.
 
 When run, its output looks like the below.
 
