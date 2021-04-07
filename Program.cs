@@ -12,17 +12,23 @@ namespace winhiddump
 
         static void Main(string[] args)
         {
-            Console.WriteLine("WinHIDdump:");
+            int vid = 0;
+            int pid = 0;
 
-            string vidpid = GetArgument(args, "--vidpid");
-//            Console.WriteLine("Got vidpid: " + vidpid);
+            int.TryParse(GetArgument(args, "--vid"), System.Globalization.NumberStyles.HexNumber, null, out vid);
+            int.TryParse(GetArgument(args, "--pid"), System.Globalization.NumberStyles.HexNumber, null, out pid);
 
             var list = DeviceList.Local;
             foreach (var dev in list.GetHidDevices())
             {
-                Console.Write(string.Format("{0:X4}:{1:X4}: {2} - {3}\nPATH:{4}\n", 
+                if ((vid != 0 && vid != dev.VendorID) ||
+                    (pid != 0 && pid != dev.ProductID))
+                {
+                    continue;
+                }
+
+                Console.Write(string.Format("{0:X4}:{1:X4}: {2} - {3}\nPATH:{4}\n",
                     dev.VendorID, dev.ProductID, dev.GetManufacturer(), dev.GetProductName(), dev.DevicePath));
-//                Console.WriteLine(dev.ToString() + " @ " + dev.DevicePath);
                 byte[] rawReportDescriptor = dev.GetRawReportDescriptor();
                 Console.Write("DESCRIPTOR:\n  ");
                 for( int i=0; i< rawReportDescriptor.Length; i++)
