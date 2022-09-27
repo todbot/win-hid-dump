@@ -51,8 +51,8 @@ namespace winhiddump
                 Console.WriteLine("\n  ({0} bytes)", rawReportDescriptor.Length);
 //                Console.WriteLine("  {0} ({1} bytes)", string.Join(" ", rawReportDescriptor.Select(d => d.ToString("X2"))), rawReportDescriptor.Length);
             }
-            Console.WriteLine("Press any key to exit");
-            Console.ReadKey();
+//            Console.WriteLine("Press any key to exit");
+//            Console.ReadKey();
         }
     }
 }
