@@ -27,9 +27,21 @@ namespace winhiddump
                     continue;
                 }
 
+                string manufacturer = "(unnamed manufacturer)";
+                try { manufacturer = dev.GetManufacturer(); } catch { }
+
+                string productName = "(unnamed product)";
+                try { productName = dev.GetProductName(); } catch { }
+
                 Console.Write(string.Format("{0:X4}:{1:X4}: {2} - {3}\nPATH:{4}\n",
-                    dev.VendorID, dev.ProductID, dev.GetManufacturer(), dev.GetProductName(), dev.DevicePath));
-                byte[] rawReportDescriptor = dev.GetRawReportDescriptor();
+                    dev.VendorID, dev.ProductID, manufacturer, productName, dev.DevicePath));
+                byte[] rawReportDescriptor = new byte[] { };
+                try
+                {
+                    rawReportDescriptor = dev.GetRawReportDescriptor();
+                } catch (Exception e){ 
+                    Console.Write("Unable to parse HID Report: {0}", e);
+                }
                 Console.Write("DESCRIPTOR:\n  ");
                 for( int i=0; i< rawReportDescriptor.Length; i++)
                 {
