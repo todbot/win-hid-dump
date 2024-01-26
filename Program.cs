@@ -6,17 +6,41 @@ using HidSharp;
 
 namespace winhiddump
 {
+    public static class HidDeviceExtensions
+    {
+        public static string GetManufacturerOrDefault(this HidDevice device, string defaultValue)
+        {
+            try
+            {
+                return device.GetManufacturer();
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+
+        public static string GetProductNameOrDefault(this HidDevice device, string defaultValue)
+        {
+            try
+            {
+                return device.GetProductName();
+            }
+            catch
+            {
+                return defaultValue;
+            }
+        }
+    }
+
     class Program
     {
         static string GetArgument(IEnumerable<string> args, string option) => args.SkipWhile(i => i != option).Skip(1).Take(1).FirstOrDefault();
 
         static void Main(string[] args)
         {
-            int vid = 0;
-            int pid = 0;
-
-            int.TryParse(GetArgument(args, "--vid"), System.Globalization.NumberStyles.HexNumber, null, out vid);
-            int.TryParse(GetArgument(args, "--pid"), System.Globalization.NumberStyles.HexNumber, null, out pid);
+            int.TryParse(GetArgument(args, "--vid"), System.Globalization.NumberStyles.HexNumber, null, out int vid);
+            int.TryParse(GetArgument(args, "--pid"), System.Globalization.NumberStyles.HexNumber, null, out int pid);
 
             var list = DeviceList.Local;
             foreach (var dev in list.GetHidDevices())
@@ -27,32 +51,36 @@ namespace winhiddump
                     continue;
                 }
 
-                string manufacturer = "(unnamed manufacturer)";
-                try { manufacturer = dev.GetManufacturer(); } catch { }
-
-                string productName = "(unnamed product)";
-                try { productName = dev.GetProductName(); } catch { }
-
-                Console.Write(string.Format("{0:X4}:{1:X4}: {2} - {3}\nPATH:{4}\n",
-                    dev.VendorID, dev.ProductID, manufacturer, productName, dev.DevicePath));
-                byte[] rawReportDescriptor = new byte[] { };
+                string manufacturer = dev.GetManufacturerOrDefault("(unnamed manufacturer)");
+                string productName = dev.GetProductNameOrDefault("(unnamed product)");
                 try
                 {
+                    byte[] rawReportDescriptor = new byte[] { };
                     rawReportDescriptor = dev.GetRawReportDescriptor();
-                } catch (Exception e){ 
-                    Console.Write("Unable to parse HID Report: {0}", e);
+                    Console.Write(string.Format("{0:X4}:{1:X4}: {2} - {3}\nPATH:{4}\n",
+                        dev.VendorID,
+                        dev.ProductID,
+                        manufacturer,
+                        productName,
+                        dev.DevicePath));
+                    Console.Write("DESCRIPTOR:\n  ");
+                    for (int i = 0; i < rawReportDescriptor.Length; i++)
+                    {
+                        Console.Write(rawReportDescriptor[i].ToString("X2") + " ");
+                        Console.Write((i % 16 == 15) ? "\n  " : " ");
+                    }
+                    Console.WriteLine("\n  ({0} bytes)", rawReportDescriptor.Length);
+
                 }
-                Console.Write("DESCRIPTOR:\n  ");
-                for( int i=0; i< rawReportDescriptor.Length; i++)
+                catch (Exception e)
                 {
-                    Console.Write(rawReportDescriptor[i].ToString("X2") + " ");
-                    Console.Write((i % 16 == 15) ? "\n  " : " ");
+                    Console.WriteLine("Unable to parse HID Report: {0}: {1}", e.GetType().Name, e.Message);
                 }
-                Console.WriteLine("\n  ({0} bytes)", rawReportDescriptor.Length);
-//                Console.WriteLine("  {0} ({1} bytes)", string.Join(" ", rawReportDescriptor.Select(d => d.ToString("X2"))), rawReportDescriptor.Length);
+                finally
+                {
+                    Console.WriteLine(new string('-', 50));
+                }
             }
-//            Console.WriteLine("Press any key to exit");
-//            Console.ReadKey();
         }
     }
 }
