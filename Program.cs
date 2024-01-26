@@ -78,7 +78,7 @@ namespace winhiddump
                 }
                 finally
                 {
-                    Console.WriteLine(new string('-', 50));
+                    Console.WriteLine(new string('-', Console.WindowWidth - 1));
                 }
             }
         }
