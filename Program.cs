@@ -6,33 +6,6 @@ using HidSharp;
 
 namespace winhiddump
 {
-    public static class HidDeviceExtensions
-    {
-        public static string GetManufacturerOrDefault(this HidDevice device, string defaultValue)
-        {
-            try
-            {
-                return device.GetManufacturer();
-            }
-            catch
-            {
-                return defaultValue;
-            }
-        }
-
-        public static string GetProductNameOrDefault(this HidDevice device, string defaultValue)
-        {
-            try
-            {
-                return device.GetProductName();
-            }
-            catch
-            {
-                return defaultValue;
-            }
-        }
-    }
-
     class Program
     {
         static string GetArgument(IEnumerable<string> args, string option) => args.SkipWhile(i => i != option).Skip(1).Take(1).FirstOrDefault();
@@ -71,10 +44,15 @@ namespace winhiddump
                     }
                     Console.WriteLine("\n  ({0} bytes)", rawReportDescriptor.Length);
 
+                    HidDeviceDesciptorParser.parseAndPrint(rawReportDescriptor);
                 }
                 catch (Exception e)
                 {
+                    Console.WriteLine("{0} - {1}", manufacturer, productName);
                     Console.WriteLine("Unable to parse HID Report: {0}: {1}", e.GetType().Name, e.Message);
+#if DEBUG
+                    Console.WriteLine(e);
+#endif
                 }
                 finally
                 {
